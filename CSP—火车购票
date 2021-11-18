@@ -1,0 +1,78 @@
+//火车购票
+//20排、每排5位 
+#include<iostream>
+using namespace std;
+
+int pd1(int arr[],int i) 
+{
+	if(arr[i]==0) return 1;//全空座位行
+	else return 0;
+}
+int pd2(int arr[],int i)
+{
+	return 5-arr[i];//返回x行空座位数	
+}
+int main()
+{
+	int n;
+	cin>>n;					//n个购票指令
+	int arr[20]={0};
+	int i=0;
+	while(n--)
+	{
+		int rows=0;
+		int p;
+		cin>>p;
+		while(rows<20)	//从第一行到最后一行
+		{
+			int emptycount=0;
+			emptycount=pd2(arr,rows);//空座位数 
+			//cout<<"emptycount="<<emptycount<<endl;
+			if(p<=emptycount)//当购票数小于当行空座位数  
+			{
+				int i=rows; 
+				while(p--)
+					{
+						arr[i]++;
+						cout<<arr[i]+i*5<<" ";
+					}
+				cout<<endl;
+				break;
+			}
+			else//当购票数大于当行空座位数
+			{
+				if(rows==19)//当最后一行也没有连续座位 
+				{
+					int row=0;
+					while(row<20)
+					{
+						for(int i=0;i<20;i++)
+						{
+							while(pd2(arr,i)>0 && arr[i]<5)
+							{
+								arr[i]++;
+								cout<<arr[i]+i*5<<" ";
+								p--;
+								if(p==0)
+									break;
+							}
+							if(p==0)
+									break;
+						}
+						if(p==0)
+									break;
+						else
+							row++;
+					}
+					cout<<endl;
+					break; //当所有购买者票都输出之后，结束整个循环 
+				} 
+				else
+				{
+					rows++;
+				}	
+			}
+		} 
+	}
+	
+}
