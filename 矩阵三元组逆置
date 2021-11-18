@@ -1,0 +1,149 @@
+//1．输入稀疏矩阵，建立稀疏矩阵三元组顺序结构，实现矩阵的列序遍历转置。
+/*
+0 0 4 0 0 0 
+0 6 0 0 0 0 
+0 0 0 0 0 0
+5 0 0 0 3 0
+0 0 7 0 0 0
+A.arr
+0 2 4
+1 1 6
+3 0 5
+3 4 3
+4 2 7
+0 0 0
+*/
+#include<iostream>
+using namespace std;
+#define ElemType int
+#define Status int 
+#define Maxsize 1000
+
+typedef struct 					//三元组 
+{
+	int i,j;					//行、列 
+	ElemType v;					//元素值 
+}Triple;
+typedef struct 
+{
+	int rows,cols,nums;			//行数、列数、非零个数
+	Triple arr[Maxsize]; 
+}Matrix;
+Status TransposeMatrix(Matrix A,Matrix &B)
+{
+	B.cols = A.rows;
+	B.rows = A.cols;
+	B.nums = A.nums;
+	
+	if(A.nums>0)				//稀疏矩阵
+	{
+		int q=0;		//q为B的当前位置，k控制列，p控制三元组行
+		for(int k=0;k<A.rows;k++)
+		{
+			for(int p=0;p<A.nums;p++)
+			{
+				if(A.arr[p].j == k)
+				{
+					cout<<"q="<<q<<endl;
+					B.arr[q].i=A.arr[q].j;
+					B.arr[q].j=A.arr[q].i;
+					B.arr[q].v=A.arr[q].v;
+					q++;
+				}
+			}
+		}	
+	}
+	return 1;
+}
+void FastTransposeMatrix(Matrix A,Matrix &B)            //快速转置
+{                                                      	//采用三元组顺序表存储表示，求稀疏矩阵M的转置矩阵T
+    B.cols = A.rows;
+	B.rows = A.cols;
+	B.nums = A.nums;
+    if(A.nums>0)
+    {
+        int col;
+        int num[100], cpot[100];
+        for (col = 0; col < A.rows; col++)
+            num[col] = 0;                 				//num数组的初始化
+        for (int t = 0; t < A.nums; t++)
+            {++num[A.arr[t].j];         					//求M中每一列含有的非零元个数
+            //cout<<"A.arr[t].j="<<A.arr[t].j<<endl;
+            //cout<<"num="<<num[A.arr[t].j]<<endl;
+        }
+        cpot[0] = 0;
+        for (col = 1; col < A.rows; col++)
+            cpot[col] = cpot[col - 1] + num[col - 1];    //求cpot向量
+        
+        int q;
+        for (int p = 0; p < A.nums; p++)
+        {
+            col = A.arr[p].j;
+            q = cpot[col];
+            //cout<<"q="<<q<<endl;
+            B.arr[q].i = A.arr[p].j;
+            B.arr[q].j = A.arr[p].i;
+            B.arr[q].v = A.arr[p].v;
+            ++cpot[col];
+        }
+    }
+    return;
+}
+Status SortMatrix(Matrix &B)
+{
+	int n=B.nums;
+	bool flag=false;
+	while(!flag)
+	{
+		flag=true;
+		for(int i=0;i<n-1;i++)
+		{
+			if(B.arr[i].i>B.arr[i+1].i)
+			{
+				swap(B.arr[i].i,B.arr[i+1].i);
+				swap(B.arr[i].j,B.arr[i+1].j);
+				swap(B.arr[i].v,B.arr[i+1].v);
+				flag=false;
+			}
+		}
+		n--;
+	}
+	return 1;
+}
+void PrintMatrix(Matrix A)
+{
+	cout<<"行"<<"  "<<"列"<<"  "<<"值"<<endl;
+	for(int i=0;i<A.nums;i++)
+	{
+		cout<<" "<<A.arr[i].i<<"  ";
+		cout<<" "<<A.arr[i].j<<"  ";
+		cout<<" "<<A.arr[i].v<<endl;
+	}
+}
+int main()
+{
+	Matrix A,B;
+	cout<<"请分别输入矩阵的行、列数："<<endl;
+	cin>>A.rows>>A.cols;
+	cout<<"请从左至右、从上至下输入矩阵："<<endl;
+	int x,y,z;
+	A.nums=0;
+	int n=A.rows;
+	for(int i=0;i<n;i++)
+	{
+		cin>>x>>y>>z;
+		A.arr[i].i=x;
+		A.arr[i].j=y;
+		A.arr[i].v=z;
+		A.nums++;
+	}
+	//TransposeMatrix(A,B);
+	FastTransposeMatrix(A,B);
+	cout<<"转置前："<<endl; 
+	PrintMatrix(A);
+	//SortMatrix(B);
+	cout<<"转置后："<<endl; 
+	PrintMatrix(B);
+	
+	return 0;
+}
