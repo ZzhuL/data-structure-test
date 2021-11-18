@@ -1,0 +1,69 @@
+//CSP_小明放学
+//所有测试点保证n≤10^5
+//=0 表示经过了一段道路，将会耗时 t 秒，此处 t 不超过 10^6
+//R,Y,G均不超过 10^6。
+#include<iostream>
+using namespace std;
+#define  ll long long
+int main()
+{
+	ll r,y,g;					//Red,Yellow,Green;
+	cin>>r>>y>>g;
+	ll n;						//n个路段 
+	cin>>n;
+	ll sum=0;					//所花时间 
+	ll cur=0;				//走到路口时的时间 
+	while(n--)
+	{
+		int k,t;
+		cin>>k>>t;
+		if(k==0)				//
+		{
+			sum+=t;
+			continue;
+		}
+	    if(k==1)				//红灯 
+		{
+			cur=(r-t)+sum;	
+			cur%=(r+g+y);
+		}
+	    if(k==2)				//黄灯 
+		{
+			cur=(r+y+g-t)+sum;
+			cur%=(r+g+y);
+		}
+		if(k==3)				//绿灯 
+		{
+			cur=(r+g-t)+sum;
+			cur%=(r+g+y);
+		}
+		if(cur>0 && cur<r)		//红灯 
+		{
+			k=1;
+			t=r-cur;
+		}
+		if(cur>=r && cur<r+g)	//黄灯 
+		{
+			k=3;
+			//t=r+g-cur;
+		}
+	    if(cur>=r+g && cur<r+g+y)//绿灯 
+		{
+			k=2;
+			t=r+g+y-cur;
+		}
+	    if(k==1)
+		{
+			sum+=t; 
+		}
+		if(k==2)
+		{
+	    	sum+=(r+t);
+		}
+		if(k==3)
+		{
+	    	sum+=0;
+		}
+	}
+	cout<<sum<<endl;
+}
