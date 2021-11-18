@@ -1,0 +1,60 @@
+//2. 求矩阵的马鞍点。（书P69 7）i行最小   j列最大  || 马鞍点位置
+//一个矩阵至多只有一个马鞍点且若存在，其一定是每行最小值中的最大值，每列最大值中的最小值
+#include<iostream>
+#define Row 3				//行 
+#define Col 3			//列 
+using namespace std;
+void pointposition(int A[Row][Col])
+{
+	int row_min[Row],col_max[Col];	//存每行最小、每列最大 
+	for(int i=0;i<Row;i++)
+		row_min[i]=A[i][0];
+	for(int j=0;j<Col;j++)
+		col_max[j]=A[0][j];
+	for(int i=0;i<Row;i++)
+	{
+		for(int j=0;j<Col;j++)
+		{
+			if(A[i][j]<row_min[i])
+				row_min[i]=A[i][j];
+			if(A[i][j]>col_max[i])
+				col_max[j]=A[i][j];
+		}
+	}
+	int row_min_max = row_min[0];	//存每行小中大、每列大中小 
+	int col_max_min = col_max[0];
+	int row,col;
+	for(int i =0;i<Row;i++)
+		if(row_min[i]>row_min_max)	
+		{
+			row_min_max=row_min[i];
+			row = i;
+		}
+	for(int j =0;j<Row;j++)
+		if(col_max[j]<col_max_min)
+		{
+			col_max_min=col_max[j];
+			col = j;
+		}
+	if(row_min_max==col_max_min)
+		cout<<"A["<<row<<"]"<<"["<<col<<"]"<<"为马鞍点"<<endl;
+	else
+		cout<<"不存在马鞍点"<<endl; 
+	return;
+}
+
+int main()
+{
+	int A[Row][Col];
+	int i,j;
+	cout<<"请输入矩阵："<<endl;
+	for(i=0;i<Row;i++)
+	{
+		for(j=0;j<Col;j++)
+		{
+			cin>>A[i][j];
+		}
+	}
+	pointposition(A);
+	return 0; 
+} 
